@@ -1,0 +1,45 @@
+---
+// Ink brush stroke used as a transition between two sections.
+// The strip takes the colour of the section above (`from`) and the stroke
+// paints the colour of the section below (`to`), so it "bleeds" upwards.
+interface Props {
+  /** Background colour (section above), e.g. 'var(--ink)'. */
+  from: string;
+  /** Stroke colour (section below), e.g. 'var(--cream)'. */
+  to: string;
+  /** Mirror the stroke horizontally for variety. */
+  mirror?: boolean;
+}
+const { from, to, mirror = false } = Astro.props;
+// Each stroke owns its filter: WebKit ignores filters referenced from a zero-size <svg>.
+const filterId = `ink-${Math.random().toString(36).slice(2, 8)}`;
+---
+<div class="brush" data-reveal aria-hidden="true" style={`background:${from};color:${to}`}>
+  <!-- The reveal clip lives on this wrapper: Chrome hides filtered SVG content when the clip is on the <svg> itself -->
+  <div class="brush__paint">
+  <svg
+    viewBox="0 0 1440 160"
+    preserveAspectRatio="none"
+    style={mirror ? 'transform:scaleX(-1)' : undefined}
+  >
+    <filter id={filterId} x="-5%" y="-30%" width="110%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035 0.22" numOctaves="2" seed="7" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <g fill="currentColor" filter={`url(#${filterId})`}>
+      <path d="M0 160 L0 92 C90 70 170 104 280 86 C400 66 470 40 610 58 C760 78 820 104 960 84 C1090 66 1170 36 1300 52 C1370 60 1410 74 1440 66 L1440 160 Z" />
+      <path d="M120 72 C260 54 420 36 570 42 C430 50 280 64 140 78 Z" />
+      <path d="M810 72 C960 54 1100 38 1250 36 C1120 48 980 64 830 78 Z" />
+      <path d="M40 84 C110 74 170 70 230 72 C170 78 110 84 50 90 Z" />
+      <circle cx="332" cy="40" r="5" />
+      <circle cx="352" cy="26" r="2.5" />
+      <circle cx="702" cy="34" r="3" />
+      <circle cx="1012" cy="28" r="3.5" />
+      <circle cx="1384" cy="38" r="6" />
+      <circle cx="1404" cy="22" r="2.5" />
+    </g>
+    <!-- Unfiltered base so the displacement never leaves a seam against the next section -->
+    <rect y="128" width="1440" height="32" fill="currentColor" />
+  </svg>
+  </div>
+</div>

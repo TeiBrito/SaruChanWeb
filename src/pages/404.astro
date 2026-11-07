@@ -1,0 +1,61 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Game over">
+  <section class="gameover sec--ink">
+    <img class="gameover__mono" src="/brand/mono-negativo.svg" alt="" width="1480" height="1050" />
+    <h1 class="gameover__title">Game over</h1>
+    <p class="gameover__text">Error 404: esta pantalla no existe (o el mono se la ha comido).</p>
+    <p class="gameover__continue" aria-hidden="true">Continue? <span id="countdown">9</span></p>
+    <a class="btn" href="/">Volver al inicio</a>
+  </section>
+</Base>
+
+<style>
+  .gameover {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 18px;
+    min-height: calc(100svh - var(--hud-h) - 90px);
+    padding: 48px var(--gutter);
+    text-align: center;
+  }
+  .gameover__mono {
+    width: min(60vw, 260px);
+    height: auto;
+    rotate: 12deg;
+    opacity: 0.85;
+  }
+  .gameover__title {
+    margin: 8px 0 0;
+    font-family: var(--f-arcade);
+    font-weight: 400;
+    font-size: clamp(26px, 7vw, 54px);
+    color: var(--seal);
+    text-transform: uppercase;
+  }
+  .gameover__text {
+    max-width: 40ch;
+    margin: 0;
+    opacity: 0.8;
+  }
+  .gameover__continue {
+    margin: 8px 0 6px;
+    font-family: var(--f-arcade);
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+</style>
+
+<script>
+  // Classic arcade "CONTINUE?" countdown that loops forever.
+  const el = document.getElementById('countdown');
+  let n = 9;
+  if (el) {
+    setInterval(() => {
+      n = n === 0 ? 9 : n - 1;
+      el.textContent = String(n);
+    }, 1000);
+  }
+</script>

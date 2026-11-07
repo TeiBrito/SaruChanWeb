@@ -1,0 +1,183 @@
+---
+// Temporary typographic key art for Hikari (光 = "light" in Japanese):
+// a warm glow pushing back ink-like darkness that creeps in from the edges.
+// Replace with a real cover by setting `cover` in src/data/games.ts and removing `art`.
+const particles = Array.from({ length: 18 }, (_, i) => ({
+  left: (i * 37 + 11) % 100,
+  delay: ((i * 7) % 10) * 0.6,
+  duration: 5 + ((i * 3) % 5),
+  size: 2 + (i % 3),
+}));
+---
+<div class="hk" role="img" aria-label="Hikari">
+  <svg class="hk__bg" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <radialGradient id="hk-glow" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#ffd58a" stop-opacity="0.95" />
+        <stop offset="22%" stop-color="#ff9a3c" stop-opacity="0.75" />
+        <stop offset="50%" stop-color="#c8342b" stop-opacity="0.35" />
+        <stop offset="100%" stop-color="#16130f" stop-opacity="0" />
+      </radialGradient>
+      <!-- Turns smooth shapes into drifting smoke / spilled ink -->
+      <filter id="hk-smoke" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="4" seed="4" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="70" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+
+    <rect width="800" height="500" fill="#0c0a0e" />
+    <rect class="hk__glow" width="800" height="500" fill="url(#hk-glow)" />
+
+    <!-- Darkness: a soft violet layer behind a near-black one -->
+    <g filter="url(#hk-smoke)">
+      <g fill="#2a1631" opacity="0.7">
+        <path d="M0 0 H190 C140 130 240 210 150 310 C90 390 200 450 160 500 H0Z" />
+        <path d="M800 0 H600 C670 100 570 190 660 270 C740 340 620 430 670 500 H800Z" />
+      </g>
+      <g fill="#050407">
+        <path d="M0 0 H130 C90 120 180 200 100 300 C50 380 140 450 110 500 H0Z" />
+        <path d="M800 0 H660 C720 90 630 180 710 260 C780 330 680 420 730 500 H800Z" />
+        <path d="M0 500 V430 C150 390 260 480 400 440 C540 400 640 480 800 420 V500Z" />
+        <path d="M0 0 V45 C200 85 320 15 480 55 C600 85 700 25 800 45 V0Z" />
+      </g>
+    </g>
+  </svg>
+
+  <span class="hk__kanji" aria-hidden="true">光</span>
+  <span class="hk__beam" aria-hidden="true"></span>
+
+  <div class="hk__text">
+    <span class="hk__title">Hikari</span>
+    <span class="hk__kana" aria-hidden="true">ひ・か・り</span>
+  </div>
+
+  <span class="hk__particles" aria-hidden="true">
+    {particles.map((p) => (
+      <i style={`left:${p.left}%;--d:${p.delay}s;--t:${p.duration}s;--s:${p.size}px`} />
+    ))}
+  </span>
+</div>
+
+<style>
+  .hk {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    container-type: inline-size;
+    background: #0c0a0e;
+  }
+  .hk__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hk__glow {
+    transform-origin: center;
+    animation: hk-pulse 5s ease-in-out infinite;
+  }
+  @keyframes hk-pulse {
+    50% {
+      opacity: 0.75;
+    }
+  }
+
+  /* Huge brush kanji glowing behind the title */
+  .hk__kanji {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* The brush font sits low in its em box, so nudge it up past centre */
+    translate: -50% -64%;
+    font-family: var(--f-kanji);
+    font-size: 54cqi;
+    line-height: 1;
+    color: #ffcf7a;
+    opacity: 0.2;
+    text-shadow: 0 0 6cqi rgba(255, 170, 70, 0.8);
+    user-select: none;
+  }
+
+  /* Horizontal ray of light slicing through the darkness */
+  .hk__beam {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 0.5cqi;
+    min-height: 2px;
+    background: linear-gradient(90deg, transparent 8%, rgba(255, 214, 140, 0.9) 35%, #fff6df 50%, rgba(255, 214, 140, 0.9) 65%, transparent 92%);
+    box-shadow: 0 0 3cqi 0.6cqi rgba(255, 160, 60, 0.55);
+    translate: 0 11cqi;
+    animation: hk-beam 5s ease-in-out infinite;
+  }
+  @keyframes hk-beam {
+    50% {
+      scale: 0.85 1;
+      opacity: 0.7;
+    }
+  }
+
+  .hk__text {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 2.4cqi;
+    translate: 0 -2cqi;
+  }
+  .hk__title {
+    font-family: var(--f-kanji);
+    font-size: 15cqi;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    padding-left: 0.12em; /* optically recentre the tracked word */
+    text-transform: uppercase;
+    color: #fff6df;
+    text-shadow:
+      0 0 1cqi #fff,
+      0 0 3cqi #ffb347,
+      0 0 7cqi rgba(255, 122, 26, 0.85),
+      0 0 14cqi rgba(200, 52, 43, 0.6);
+  }
+  .hk__kana {
+    font-family: var(--f-kanji);
+    font-size: 3.6cqi;
+    letter-spacing: 0.6em;
+    padding-left: 0.6em;
+    color: #ffcf7a;
+    text-shadow: 0 0 2cqi rgba(255, 140, 40, 0.8);
+  }
+
+  /* Specks of light drifting upwards */
+  .hk__particles i {
+    position: absolute;
+    bottom: -6px;
+    width: var(--s);
+    height: var(--s);
+    border-radius: 50%;
+    background: #ffd58a;
+    box-shadow: 0 0 6px 2px rgba(255, 170, 70, 0.7);
+    opacity: 0;
+    animation: hk-rise var(--t) linear var(--d) infinite;
+  }
+  @keyframes hk-rise {
+    10% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 0.6;
+    }
+    100% {
+      translate: 3cqi -70cqi;
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hk__particles {
+      display: none;
+    }
+  }
+</style>

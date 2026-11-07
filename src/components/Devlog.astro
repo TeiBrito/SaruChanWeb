@@ -1,0 +1,127 @@
+---
+// Latest devlog posts rendered as arcade "save slots".
+import { getCollection } from 'astro:content';
+import { formatDate } from '../scripts/format';
+
+const posts = (await getCollection('devlog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
+---
+<section class="sec sec--ink" id="devlog" aria-labelledby="devlog-title">
+  <div class="wrap">
+    <p class="stage">Stage 02</p>
+    <h2 class="title" id="devlog-title">Devlog</h2>
+    <p class="lead">Partidas guardadas: bocetos, bugs y decisiones de diseño contadas desde dentro.</p>
+
+    {posts.length > 0 ? (
+      <ol class="slots">
+        {posts.map((post, i) => (
+          <li>
+            <a class="slot" href={`/devlog/${post.id}/`}>
+              <span class="slot__num" aria-hidden="true">Slot {String(i + 1).padStart(2, '0')}</span>
+              <span class="slot__main">
+                <span class="slot__title">{post.data.title}</span>
+                <span class="slot__summary">{post.data.summary}</span>
+              </span>
+              <time class="slot__date" datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+              <span class="slot__go" aria-hidden="true">▶</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="slots__empty">No hay partidas guardadas todavía. Vuelve pronto.</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .slots {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .slot {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 22px;
+    border: 2px solid var(--ink-3);
+    border-radius: 10px;
+    background: var(--ink-2);
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      background 0.15s ease,
+      transform 0.15s ease;
+  }
+  .slot:hover,
+  .slot:focus-visible {
+    border-color: var(--seal);
+    background: #2a231c;
+    transform: translateX(6px);
+  }
+  .slot__num,
+  .slot__date {
+    font-family: var(--f-arcade);
+    font-size: 10px;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+  .slot__num {
+    color: var(--seal);
+  }
+  .slot__date {
+    opacity: 0.6;
+  }
+  .slot__main {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .slot__title {
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .slot__summary {
+    font-size: 15px;
+    opacity: 0.7;
+  }
+  .slot__go {
+    color: var(--seal);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .slot:hover .slot__go,
+  .slot:focus-visible .slot__go {
+    opacity: 1;
+    animation: nudge 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes nudge {
+    to {
+      translate: 4px 0;
+    }
+  }
+  .slots__empty {
+    font-family: var(--f-arcade);
+    font-size: 12px;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 640px) {
+    .slot {
+      grid-template-columns: 1fr auto;
+      gap: 8px 12px;
+    }
+    .slot__main {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .slot__go {
+      display: none;
+    }
+  }
+</style>

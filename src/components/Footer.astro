@@ -1,0 +1,46 @@
+---
+import Seal from './Seal.astro';
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <Seal class="footer__seal" />
+    <p class="footer__copy">© {year} {site.name}</p>
+    <p class="footer__note">Hecho con tinta, café y algún plátano</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--ink);
+    border-top: 2px solid var(--ink-3);
+    color: var(--cream);
+  }
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+    padding-block: 28px;
+  }
+  .footer :global(.footer__seal) {
+    width: 30px;
+    height: 30px;
+  }
+  .footer__copy,
+  .footer__note {
+    margin: 0;
+    font-size: 14px;
+  }
+  .footer__note {
+    margin-left: auto;
+    opacity: 0.6;
+  }
+  @media (max-width: 560px) {
+    .footer__note {
+      margin-left: 0;
+      flex-basis: 100%;
+    }
+  }
+</style>

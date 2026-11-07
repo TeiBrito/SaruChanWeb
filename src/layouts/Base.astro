@@ -1,0 +1,59 @@
+---
+import '@fontsource/rubik-dirt';
+import '@fontsource/press-start-2p';
+import '@fontsource/zen-kaku-gothic-new/400.css';
+import '@fontsource/zen-kaku-gothic-new/700.css';
+import '@fontsource/yuji-syuku';
+import '../styles/global.css';
+import Hud from '../components/Hud.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  /** Page title; the studio name is appended automatically. */
+  title?: string;
+  /** Meta description for search engines and link previews. */
+  description?: string;
+}
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
+// Absolute URLs (built from `site` in astro.config.mjs) so link previews work on social networks.
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/apple-touch-icon.png', Astro.site);
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#16130F" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <!-- Flag JS early so reveal animations never hide content when JS is off -->
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Saltar al contenido</a>
+
+    <Hud />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+      import '../scripts/arcade.ts';
+    </script>
+  </body>
+</html>
