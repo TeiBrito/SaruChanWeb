@@ -1,23 +1,28 @@
 ---
 // Latest devlog posts rendered as arcade "save slots".
-import { getCollection } from 'astro:content';
 import { formatDate } from '../scripts/format';
+import { getPosts } from '../i18n/devlog';
+import { localePath, useT, type Lang } from '../i18n/ui';
 
-const posts = (await getCollection('devlog', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 5);
+interface Props {
+  /** Page language. */
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang).devlog;
+const posts = (await getPosts(lang)).slice(0, 5);
 ---
 <section class="sec sec--ink" id="devlog" aria-labelledby="devlog-title">
   <div class="wrap">
     <p class="stage">Stage 02</p>
-    <h2 class="title" id="devlog-title">Devlog</h2>
-    <p class="lead">Partidas guardadas: bocetos, bugs y decisiones de diseño contadas desde dentro.</p>
+    <h2 class="title" id="devlog-title">{t.title}</h2>
+    <p class="lead">{t.lead}</p>
 
     {posts.length > 0 ? (
       <ol class="slots">
-        {posts.map((post, i) => (
+        {posts.map(({ post, slug }, i) => (
           <li>
-            <a class="slot" href={`/devlog/${post.id}/`}>
+            <a class="slot" href={localePath(lang, `/devlog/${slug}/`)}>
               <span class="slot__num" aria-hidden="true">Slot {String(i + 1).padStart(2, '0')}</span>
               <span class="slot__main">
                 <span class="slot__title">{post.data.title}</span>
@@ -30,7 +35,7 @@ const posts = (await getCollection('devlog', ({ data }) => !data.draft))
         ))}
       </ol>
     ) : (
-      <p class="slots__empty">No hay partidas guardadas todavía. Vuelve pronto.</p>
+      <p class="slots__empty">{t.empty}</p>
     )}
   </div>
 </section>

@@ -1,20 +1,4 @@
 ---
-import Base from '../layouts/Base.astro';
-import Hero from '../components/Hero.astro';
-import Brush from '../components/Brush.astro';
-import Games from '../components/Games.astro';
-import Devlog from '../components/Devlog.astro';
-import Studio from '../components/Studio.astro';
-import Contact from '../components/Contact.astro';
+import Home from '../components/Home.astro';
 ---
-<Base>
-  <Hero />
-  <Brush from="var(--ink)" to="var(--cream)" />
-  <Games />
-  <Brush from="var(--cream)" to="var(--ink)" mirror />
-  <Devlog />
-  <Brush from="var(--ink)" to="var(--cream)" />
-  <Studio />
-  <Brush from="var(--cream)" to="var(--ink)" mirror />
-  <Contact />
-</Base>
+<Home lang="es" />

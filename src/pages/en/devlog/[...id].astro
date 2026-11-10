@@ -1,0 +1,13 @@
+---
+// English devlog posts: /en/devlog/<slug>/
+import PostView from '../../../components/PostView.astro';
+import { getPosts } from '../../../i18n/devlog';
+
+export async function getStaticPaths() {
+  const posts = await getPosts('en');
+  return posts.map(({ post, slug }) => ({ params: { id: slug }, props: { post, slug } }));
+}
+
+const { post, slug } = Astro.props;
+---
+<PostView lang="en" post={post} slug={slug} />

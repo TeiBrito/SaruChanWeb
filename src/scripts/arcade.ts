@@ -214,8 +214,8 @@ function secret() {
   if (secretOn) return;
   secretOn = true;
   bonus += 30000;
-  // No "¡": the pixel font lacks that glyph.
-  toast('+30 vidas · Modo mono activado', 3200);
+  // Text comes from the page language (src/i18n/ui.ts). No "¡": the pixel font lacks that glyph.
+  toast(toastEl?.dataset.konami ?? '+30 vidas · Modo mono activado', 3200);
   document.documentElement.classList.add('konami');
 
   if (!reducedMotion) {

@@ -8,49 +8,70 @@ import '../styles/global.css';
 import Hud from '../components/Hud.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
+import { useT, type Lang } from '../i18n/ui';
 
 interface Props {
+  /** Page language. */
+  lang: Lang;
   /** Page title; the studio name is appended automatically. */
   title?: string;
   /** Meta description for search engines and link previews. */
   description?: string;
+  /** Path of this same page in the other language, if it exists (e.g. '/en/devlog/x/'). */
+  altPath?: string;
 }
-const { title, description = site.description } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.tagline}`;
+const { lang, title, description, altPath } = Astro.props;
+const t = useT(lang);
+const desc = description ?? t.meta.description;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${t.meta.tagline}`;
+
 // Absolute URLs (built from `site` in astro.config.mjs) so link previews work on social networks.
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/apple-touch-icon.png', Astro.site);
+
+// hreflang alternates tell search engines which URL serves which language.
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const alternates = altPath
+  ? [
+      { hreflang: lang, href: canonical.href },
+      { hreflang: otherLang, href: new URL(altPath, Astro.site).href },
+    ]
+  : [];
+const xDefault = alternates.find((a) => a.hreflang === 'es')?.href;
 ---
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={desc} />
     <meta name="theme-color" content="#16130F" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    {xDefault && <link rel="alternate" hreflang="x-default" href={xDefault} />}
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={t.meta.ogLocale} />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={desc} />
     <meta property="og:image" content={ogImage} />
     <!-- Flag JS early so reveal animations never hide content when JS is off -->
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
-    <a class="skip-link" href="#main">Saltar al contenido</a>
+    <a class="skip-link" href="#main">{t.skipLink}</a>
 
-    <Hud />
+    <Hud lang={lang} altHref={altPath} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" data-konami={t.arcade.konami}></div>
 
     <script>
       import '../scripts/arcade.ts';

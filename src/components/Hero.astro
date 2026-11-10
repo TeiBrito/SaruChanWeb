@@ -2,13 +2,21 @@
 // Arcade "attract screen": the monkey follows the pointer, clicking it inserts coins.
 import Seal from './Seal.astro';
 import { site } from '../data/site';
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
 ---
 <section class="hero sec--ink" id="inicio">
   <div class="hero__kanji" aria-hidden="true">猿</div>
   <div class="hero__scanlines" aria-hidden="true"></div>
 
   <div class="hero__stage">
-    <button class="mono" id="mono" type="button" aria-label="Dale al mono para insertar una moneda">
+    <button class="mono" id="mono" type="button" aria-label={t.hero.monoLabel}>
       <span class="mono__tilt" id="mono-tilt">
         <img
           class="mono__img"
@@ -26,14 +34,14 @@ import { site } from '../data/site';
       <img src="/brand/rotulo-crema.svg" alt={site.name} width="1800" height="520" />
       <Seal class="hero__seal" />
     </h1>
-    <p class="hero__tag">{site.tagline}</p>
+    <p class="hero__tag">{t.meta.tagline}</p>
 
-    <a class="press-start" href="#juegos">
+    <a class="press-start" href={`${lang === 'es' ? '/' : '/en/'}#juegos`}>
       <span class="press-start__arrow" aria-hidden="true">▶</span> Press start
     </a>
     <p class="hero__hint" aria-hidden="true">
       <span class="hero__hint--keys">↑ ↑ ↓ ↓ ← → ← → B A</span>
-      <span class="hero__hint--touch">Toca al mono. Mucho.</span>
+      <span class="hero__hint--touch">{t.hero.hintTouch}</span>
     </p>
   </div>
 </section>

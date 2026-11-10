@@ -1,0 +1,110 @@
+---
+// Devlog post page, shared by every language.
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Brush from './Brush.astro';
+import { formatDate } from '../scripts/format';
+import { getSlugs } from '../i18n/devlog';
+import { localePath, useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+  /** Post entry from the devlog collection. */
+  post: CollectionEntry<'devlog'>;
+  /** Language-free slug (file name without folder). */
+  slug: string;
+}
+const { lang, post, slug } = Astro.props;
+const t = useT(lang).devlog;
+const { Content } = await render(post);
+
+// Link the language switch to the translation only if it exists.
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const altPath = (await getSlugs(otherLang)).has(slug) ? localePath(otherLang, `/devlog/${slug}/`) : undefined;
+---
+<Base lang={lang} title={post.data.title} description={post.data.summary} altPath={altPath}>
+  <header class="post-head sec--ink">
+    <div class="wrap">
+      <a class="post-back" href={localePath(lang, '/#devlog')}>◀ {t.back}</a>
+      <p class="stage"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></p>
+      <h1 class="title">{post.data.title}</h1>
+    </div>
+  </header>
+  <Brush from="var(--ink)" to="var(--cream)" />
+  <article class="sec sec--cream post">
+    <div class="wrap prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post-head {
+    padding-block: clamp(48px, 8vw, 96px) 24px;
+  }
+  .post-back {
+    display: inline-block;
+    margin-bottom: 32px;
+    font-family: var(--f-arcade);
+    font-size: 11px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .post-back:hover {
+    color: var(--seal);
+  }
+  .post {
+    padding-top: clamp(24px, 4vw, 48px);
+  }
+
+  /* Long-form reading styles for Markdown content */
+  .prose {
+    max-width: calc(68ch + var(--gutter) * 2);
+    font-size: 1.1rem;
+  }
+  .prose :global(h2),
+  .prose :global(h3) {
+    margin: 2.2em 0 0.6em;
+    font-family: var(--f-display);
+    font-weight: 400;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .prose :global(h2) {
+    font-size: 2rem;
+  }
+  .prose :global(h3) {
+    font-size: 1.5rem;
+  }
+  .prose :global(a) {
+    color: var(--seal);
+    text-underline-offset: 3px;
+  }
+  .prose :global(img) {
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .prose :global(blockquote) {
+    margin: 1.6em 0;
+    padding-left: 20px;
+    border-left: 4px solid var(--seal);
+    font-style: italic;
+  }
+  .prose :global(code) {
+    font-size: 0.9em;
+  }
+  .prose :global(:not(pre) > code) {
+    padding: 2px 6px;
+    background: var(--cream-2);
+    border-radius: 4px;
+  }
+  .prose :global(pre) {
+    padding: 18px 20px;
+    overflow-x: auto;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+</style>

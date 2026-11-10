@@ -14,16 +14,21 @@ npm run build    # static output in dist/
 
 | What | File |
 | --- | --- |
+| Interface texts (both languages) | `src/i18n/ui.ts` |
 | Email and social links | `src/data/site.ts` |
-| Games and itch.io archive | `src/data/games.ts` (covers in `public/games/`) |
-| Devlog posts | `src/content/devlog/*.md` |
-| Studio copy and stats | `src/components/Studio.astro` |
+| Games and itch.io archive (`{ es, en }` texts) | `src/data/games.ts` (covers in `public/games/`) |
+| Devlog posts | `src/content/devlog/es/*.md` and `src/content/devlog/en/*.md` |
+| Studio stat values | `src/components/Studio.astro` |
 | Colours and fonts | `src/styles/global.css` (`:root`) |
 | Arcade effects (score, monkey, Konami) | `src/scripts/arcade.ts` |
 
+## Languages
+
+Spanish lives at `/` and English at `/en/`. The ES / EN switch in the HUD links each page to its translation.
+
 ## New devlog post
 
-Create a `.md` file in `src/content/devlog/` (the file name becomes the URL) with this header:
+Create a `.md` file in `src/content/devlog/es/` (Spanish, `/devlog/<file-name>/`) and, if you want it in English too, one **with the same file name** in `src/content/devlog/en/` (`/en/devlog/<file-name>/`). A post without translation only appears in its own language. Header:
 
 ```md
 ---

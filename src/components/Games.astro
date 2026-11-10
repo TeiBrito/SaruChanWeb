@@ -1,7 +1,15 @@
 ---
 // "Elige tu juego": each game is an ink-printed cartridge. Data lives in src/data/games.ts.
-import { games, statusLabel, archive } from '../data/games';
+import { games, archive } from '../data/games';
+import { useT, type Lang } from '../i18n/ui';
 import HikariArt from './HikariArt.astro';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang).games;
 
 // The pixel font has no uppercase accented glyphs, so strip accents for arcade labels.
 const plain = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '');
@@ -9,10 +17,8 @@ const plain = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '');
 <section class="sec sec--cream" id="juegos" aria-labelledby="juegos-title">
   <div class="wrap">
     <p class="stage">Stage 01</p>
-    <h2 class="title" id="juegos-title">Elige tu juego</h2>
-    <p class="lead">
-      Juegos pequeños con mucho cariño, dibujados a tinta y programados a base de café.
-    </p>
+    <h2 class="title" id="juegos-title">{t.title}</h2>
+    <p class="lead">{t.lead}</p>
 
     <ul class="carts">
       {games.map((game, i) => (
@@ -31,18 +37,18 @@ const plain = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '');
             </div>
             <div class="cart__body">
               <div class="cart__tags">
-                {game.featured && <p class="cart__star"><span class="cart__star-icon" aria-hidden="true">★</span> Proyecto estrella</p>}
-                <p class:list={['cart__status', `cart__status--${game.status}`]}>{plain(statusLabel[game.status])}</p>
+                {game.featured && <p class="cart__star"><span class="cart__star-icon" aria-hidden="true">★</span> {t.featured}</p>}
+                <p class:list={['cart__status', `cart__status--${game.status}`]}>{plain(t.status[game.status])}</p>
               </div>
-              <h3 class="cart__title">{game.locked ? <span aria-label="Juego secreto">???</span> : game.title}</h3>
-              <p class="cart__blurb">{game.blurb}</p>
+              <h3 class="cart__title">{game.locked ? <span aria-label={t.secret}>???</span> : game.title}</h3>
+              <p class="cart__blurb">{game.blurb[lang]}</p>
               {game.platforms && game.platforms.length > 0 && (
                 <ul class="cart__platforms">
                   {game.platforms.map((p) => <li>{p}</li>)}
                 </ul>
               )}
               {game.link && (
-                <a class="btn cart__cta" href={game.link.href}>{game.link.label}</a>
+                <a class="btn cart__cta" href={game.link.href}>{game.link.label[lang]}</a>
               )}
             </div>
           </div>
@@ -52,16 +58,16 @@ const plain = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '');
 
     {archive.length > 0 && (
       <div class="archive">
-        <h3 class="archive__title">Clásicos de la casa</h3>
-        <p class="archive__lead">Nuestros primeros juegos. Se pueden jugar gratis en itch.io.</p>
+        <h3 class="archive__title">{t.archiveTitle}</h3>
+        <p class="archive__lead">{t.archiveLead}</p>
         <ol class="board">
           {archive.map((g, i) => (
             <li>
               <a class="board__row" href={g.href} target="_blank" rel="noopener">
                 <span class="board__rank" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                 <span class="board__name">{g.title}</span>
-                {g.genre && <span class="board__genre">{plain(g.genre)}</span>}
-                <span class="board__play">Jugar <span class="sr-only">(abre itch.io)</span><span aria-hidden="true">▶</span></span>
+                {g.genre && <span class="board__genre">{plain(g.genre[lang])}</span>}
+                <span class="board__play">{t.play} <span class="sr-only">{t.opensItch}</span><span aria-hidden="true">▶</span></span>
               </a>
             </li>
           ))}

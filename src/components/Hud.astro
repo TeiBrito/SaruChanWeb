@@ -1,12 +1,25 @@
 ---
-// Sticky arcade HUD: score (grows as you explore), navigation, hi-score and credits.
+// Sticky arcade HUD: score (grows as you explore), navigation, language switch, hi-score and credits.
 import Seal from './Seal.astro';
-import { nav } from '../data/site';
+import { getNav } from '../data/site';
+import { languages, localePath, useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+  /** URL of this same page in the other language (falls back to its home). */
+  altHref?: string;
+}
+const { lang, altHref } = Astro.props;
+const t = useT(lang);
+const nav = getNav(lang);
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const otherHref = altHref ?? localePath(otherLang, '/');
 ---
 <header class="hud">
   <div class="hud__inner">
     <div class="hud__left">
-      <a class="hud__home" href="/" aria-label="SaruChan Videogames, inicio">
+      <a class="hud__home" href={localePath(lang, '/')} aria-label={t.hud.home}>
         <Seal class="hud__seal" />
       </a>
       <p class="hud__stat" aria-hidden="true">
@@ -15,7 +28,7 @@ import { nav } from '../data/site';
       </p>
     </div>
 
-    <nav class="hud__nav" aria-label="Principal">
+    <nav class="hud__nav" aria-label={t.nav.label}>
       <ul>
         {nav.map((item) => (
           <li><a href={item.href}>{item.label}</a></li>
@@ -23,15 +36,27 @@ import { nav } from '../data/site';
       </ul>
     </nav>
 
-    <div class="hud__right" aria-hidden="true">
-      <p class="hud__stat">
+    <div class="hud__right">
+      <p class="hud__stat hud__stat--hi" aria-hidden="true">
         <span class="hud__label">HI</span>
         <span class="hud__value" id="hud-hi">000000</span>
       </p>
-      <p class="hud__stat">
+      <p class="hud__stat" aria-hidden="true">
         <span class="hud__label">CREDIT</span>
         <span class="hud__value" id="hud-credit">00</span>
       </p>
+      <!-- Language switch: current language highlighted, the other one is a link -->
+      <div class="lang" role="group" aria-label={t.langSwitch.label}>
+        {(Object.keys(languages) as Lang[]).map((code) =>
+          code === lang ? (
+            <span class="lang__opt is-current" aria-current="true" lang={code}>{code.toUpperCase()}</span>
+          ) : (
+            <a class="lang__opt" href={otherHref} hreflang={code} lang={code} title={t.langSwitch.other}>
+              {code.toUpperCase()}
+            </a>
+          ),
+        )}
+      </div>
     </div>
   </div>
 </header>
@@ -128,6 +153,29 @@ import { nav } from '../data/site';
     width: 1.4em;
   }
 
+  /* ---------- Language switch ---------- */
+  .lang {
+    display: flex;
+    border: 2px solid var(--ink-3);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .lang__opt {
+    padding: 7px 7px 6px;
+    text-decoration: none;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+  }
+  .lang__opt.is-current {
+    background: var(--seal);
+    color: var(--cream);
+  }
+  a.lang__opt:hover {
+    background: var(--cream);
+    color: var(--ink);
+  }
+
   @media (max-width: 860px) {
     .hud__inner {
       grid-template-columns: 1fr auto;
@@ -165,6 +213,10 @@ import { nav } from '../data/site';
     .hud__left,
     .hud__right {
       gap: 12px;
+    }
+    /* Make room for the language switch on small phones */
+    .hud__stat--hi {
+      display: none;
     }
   }
 </style>

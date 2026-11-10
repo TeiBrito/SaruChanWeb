@@ -1,13 +1,21 @@
 ---
 import Seal from './Seal.astro';
 import { site } from '../data/site';
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang).footer;
 const year = new Date().getFullYear();
 ---
 <footer class="footer">
   <div class="wrap footer__inner">
     <Seal class="footer__seal" />
     <p class="footer__copy">© {year} {site.name}</p>
-    <p class="footer__note">Hecho con tinta, café y algún plátano</p>
+    <p class="footer__note">{t.note}</p>
   </div>
 </footer>
 

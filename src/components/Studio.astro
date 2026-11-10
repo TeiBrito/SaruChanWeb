@@ -1,31 +1,36 @@
 ---
 // "El estudio" as a character-select screen: Tei Brito is the one and only player.
-// Stats are a joke; tweak them freely.
-const stats = [
-  { label: 'Café', value: 95 },
-  { label: 'Multiclase', value: 100 },
-  { label: 'Paciencia con los bugs', value: 37 },
-];
+// Texts live in src/i18n/ui.ts. Stats are a joke; tweak the values freely (same order as the labels).
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang).studio;
+const values = [95, 100, 37];
+const stats = t.stats.map((label, i) => ({ label, value: values[i] ?? 50 }));
 ---
 <section class="sec sec--cream" id="estudio" aria-labelledby="estudio-title">
   <div class="wrap studio">
     <div class="studio__card" data-reveal>
       <p class="studio__p1" aria-hidden="true">Player 1</p>
       <div class="studio__avatar">
-        <img src="/team/tei.jpg" alt="Retrato ilustrado de Tei Brito, con gorro, barba y camisa roja" width="800" height="800" loading="lazy" />
+        <img src="/team/tei.jpg" alt={t.portraitAlt} width="800" height="800" loading="lazy" />
       </div>
       <p class="studio__name">Tei Brito</p>
-      <p class="studio__class">Clase: Estudio de una sola persona</p>
+      <p class="studio__class">{t.class}</p>
       <p class="studio__buddy">
         <img src="/brand/mono-negativo.svg" alt="" width="1480" height="1050" loading="lazy" />
-        Compañero: Saru
+        {t.buddy}
       </p>
       <dl class="stats">
         {stats.map((s) => (
           <div class="stat">
             <dt>{s.label}</dt>
             <dd>
-              <span class="stat__bar" style={`--v:${s.value}%`}><span class="sr-only">{s.value} de 100</span></span>
+              <span class="stat__bar" style={`--v:${s.value}%`}><span class="sr-only">{s.value} {t.statOf}</span></span>
             </dd>
           </div>
         ))}
@@ -34,17 +39,9 @@ const stats = [
 
     <div class="studio__text">
       <p class="stage">Stage 03</p>
-      <h2 class="title" id="estudio-title">El estudio</h2>
-      <p>
-        <strong>SaruChan Videogames</strong> es un estudio independiente de una sola persona: Tei Brito. Diseño,
-        código, arte y alguna que otra noche sin dormir salen de las mismas manos. Juegos con personalidad,
-        trazo a mano y detalles que te sacan una sonrisa.
-      </p>
-      <p>
-        Saru, el mono con gafas, es la mascota del estudio y el encargado oficial de probarlo todo y, de vez
-        en cuando, romper algo. Así es como se aprende.
-      </p>
-      <p class="studio__kanji"><span lang="ja">猿</span> <span>saru: «mono» en japonés, y la forma cariñosa en la que Tei Brito llama a su hijo</span></p>
+      <h2 class="title" id="estudio-title">{t.title}</h2>
+      {t.body.map((html) => <p set:html={html} />)}
+      <p class="studio__kanji"><span lang="ja">猿</span> <span>{t.kanji}</span></p>
     </div>
   </div>
 </section>

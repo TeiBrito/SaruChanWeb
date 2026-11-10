@@ -1,13 +1,16 @@
 ---
+// One 404 page serves the whole site; a tiny script switches its texts to English under /en/.
 import Base from '../layouts/Base.astro';
 ---
-<Base title="Game over">
+<Base lang="es" title="Game over">
   <section class="gameover sec--ink">
     <img class="gameover__mono" src="/brand/mono-negativo.svg" alt="" width="1480" height="1050" />
     <h1 class="gameover__title">Game over</h1>
-    <p class="gameover__text">Error 404: esta pantalla no existe (o el mono se la ha comido).</p>
+    <p class="gameover__text" data-en="Error 404: this screen doesn't exist (or the monkey ate it).">
+      Error 404: esta pantalla no existe (o el mono se la ha comido).
+    </p>
     <p class="gameover__continue" aria-hidden="true">Continue? <span id="countdown">9</span></p>
-    <a class="btn" href="/">Volver al inicio</a>
+    <a class="btn" id="gameover-home" href="/" data-en="Back to start" data-en-href="/en/">Volver al inicio</a>
   </section>
 </Base>
 
@@ -49,6 +52,17 @@ import Base from '../layouts/Base.astro';
 </style>
 
 <script>
+  import { langFromPath } from '../i18n/ui';
+
+  // Switch the visible texts to English when the missing URL was under /en/.
+  if (langFromPath(location.pathname) === 'en') {
+    document.documentElement.lang = 'en';
+    document.querySelectorAll<HTMLElement>('[data-en]').forEach((el) => {
+      el.textContent = el.dataset.en ?? el.textContent;
+      if (el instanceof HTMLAnchorElement && el.dataset.enHref) el.href = el.dataset.enHref;
+    });
+  }
+
   // Classic arcade "CONTINUE?" countdown that loops forever.
   const el = document.getElementById('countdown');
   let n = 9;

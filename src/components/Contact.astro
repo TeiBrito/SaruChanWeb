@@ -2,18 +2,24 @@
 // Contact and social links.
 import Seal from './Seal.astro';
 import { site } from '../data/site';
+import { useT, type Lang } from '../i18n/ui';
+
+interface Props {
+  /** Page language. */
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang).contact;
 ---
 <section class="sec sec--ink contact" id="contacto" aria-labelledby="contacto-title">
   <div class="wrap contact__inner">
     <Seal class="contact__seal" />
     <p class="stage">Stage 04</p>
-    <h2 class="title" id="contacto-title">¿Jugamos?</h2>
-    <p class="lead">
-      Prensa, colaboraciones, creadores de contenido o simplemente ganas de saludar: escríbenos.
-    </p>
+    <h2 class="title" id="contacto-title">{t.title}</h2>
+    <p class="lead">{t.lead}</p>
     <a class="btn contact__mail" href={`mailto:${site.email}`}>{site.email}</a>
 
-    <ul class="socials" aria-label="Redes sociales">
+    <ul class="socials" aria-label={t.socials}>
       {site.socials.map((s) => (
         <li><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>
       ))}

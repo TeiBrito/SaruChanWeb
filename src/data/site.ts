@@ -1,10 +1,9 @@
-// Global studio info. Edit this file to update texts and links across the whole site.
+// Global studio info shared by every language. Translatable texts live in src/i18n/ui.ts.
+
+import { localePath, useT, type Lang } from '../i18n/ui';
 
 export const site = {
   name: 'SaruChan Videogames',
-  tagline: 'Estudio indie de videojuegos',
-  description:
-    'SaruChan Videogames es un estudio independiente de videojuegos. Juegos, devlog y contacto.',
   email: 'info@saruchanvideogames.com',
   socials: [
     { label: 'itch.io', href: 'https://saruchanvideogames.itch.io' },
@@ -13,9 +12,14 @@ export const site = {
   ],
 };
 
-export const nav = [
-  { label: 'Juegos', href: '/#juegos' },
-  { label: 'Devlog', href: '/#devlog' },
-  { label: 'Estudio', href: '/#estudio' },
-  { label: 'Contacto', href: '/#contacto' },
-];
+/** Main navigation for a language. Section anchors are shared across languages. */
+export function getNav(lang: Lang) {
+  const t = useT(lang).nav;
+  const home = localePath(lang, '/');
+  return [
+    { label: t.games, href: `${home}#juegos` },
+    { label: t.devlog, href: `${home}#devlog` },
+    { label: t.studio, href: `${home}#estudio` },
+    { label: t.contact, href: `${home}#contacto` },
+  ];
+}
