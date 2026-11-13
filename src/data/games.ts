@@ -40,6 +40,20 @@ export const games: Game[] = [
     art: 'hikari',
   },
   {
+    title: 'Weird Western',
+    status: 'disponible',
+    blurb: {
+      es: 'Un juego de duelos al desenfundar donde todo depende de tus reflejos. Enfréntate a cuatro pistoleros cada vez más rápidos y, cuando salga «Shot!!!», dispara antes que ellos. Si te adelantas, pierdes.',
+      en: 'A quick-draw duel game where everything comes down to your reflexes. Face four increasingly fast gunslingers and, when you see “Shot!!!”, shoot before they do. Fire too early and you lose.',
+    },
+    platforms: ['Web'],
+    cover: '/games/weird-western.jpg',
+    link: {
+      label: { es: 'Jugar en itch.io', en: 'Play on itch.io' },
+      href: 'https://saruchanvideogames.itch.io/weird-western',
+    },
+  },
+  {
     title: 'Ship Happens',
     status: 'proximamente',
     blurb: {
